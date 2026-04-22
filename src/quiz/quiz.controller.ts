@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { QuizService } from './quiz.service';
 import { CreateQuizDto } from './dto/create-quiz.dto';
@@ -23,6 +24,16 @@ export class QuizController {
   @Get()
   findAll() {
     return this.quizService.findAll();
+  }
+
+  @Get('random')
+  findRandomDefault() {
+    return this.quizService.findRandom(10);
+  }
+
+  @Get('random/:count')
+  findRandomByCount(@Param('count', ParseIntPipe) count: number) {
+    return this.quizService.getRandomByCount(count);
   }
 
   @Get(':id')

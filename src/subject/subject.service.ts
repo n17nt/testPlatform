@@ -12,24 +12,29 @@ export class SubjectService {
     private readonly subjectRepo: Repository<Subject>,
   ) {}
   async create(createSubjectDto: CreateSubjectDto) {
-    const subject = this.subjectRepo.create(createSubjectDto);
+    const subject = this.subjectRepo.create({
+      title: createSubjectDto.title,
+      category: { id: createSubjectDto.categoryId },
+    });
     await this.subjectRepo.save(subject);
     return subject;
   }
 
   findAll() {
-    return this.subjectRepo.find();
+    return this.subjectRepo.find({ relations: ['category'] });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} subject`;
+  async findOne(id: number) {
+    return this.subjectRepo.findOne({ where: { id }, relations: ['category'] });
   }
 
-  update(id: number, updateSubjectDto: UpdateSubjectDto) {
-    return `This action updates a #${id} subject`;
+  async update(id: number, updateSubjectDto: UpdateSubjectDto) {
+    await this.subjectRepo.update(id, updateSubjectDto);
+    return this.findOne(id);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} subject`;
+  async remove(id: number) {
+    await this.subjectRepo.delete(id);
+    return { message: 'Subject removed successfully' };
   }
 }

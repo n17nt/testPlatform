@@ -14,6 +14,7 @@ import { JwtModule } from '@nestjs/jwt';
       signOptions: { expiresIn: '15m' },
     }),
   ],
+
   controllers: [UserController],
   providers: [UserService],
   exports: [UserService],
