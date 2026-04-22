@@ -1,1 +1,4 @@
-export class CreateSubjectDto {}
+export class CreateSubjectDto {
+  title: string;
+  categoryId: number;
+}
