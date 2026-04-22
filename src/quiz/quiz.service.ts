@@ -3,7 +3,7 @@ import { CreateQuizDto } from './dto/create-quiz.dto';
 import { UpdateQuizDto } from './dto/update-quiz.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Quiz } from './entities/quiz.entity';
-import { Any, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Subject } from 'src/subject/entities/subject.entity';
 
 @Injectable()
@@ -22,6 +22,15 @@ export class QuizService {
     return this.quizRepo.find({
       relations: ['subject'],
     });
+  }
+
+  async findRandom(limit = 10) {
+    return this.quizRepo
+      .createQueryBuilder('quiz')
+      .leftJoinAndSelect('quiz.subject', 'subject')
+      .orderBy('RANDOM()')
+      .take(limit)
+      .getMany();
   }
 
   findOne(id: number) {
@@ -58,5 +67,10 @@ export class QuizService {
     });
     return data;
     // this.quizRepo.createQueryBuilder
+  }
+
+  async getRandomByCount(count: number) {
+    const normalizedCount = Number.isFinite(count) && count > 0 ? count : 10;
+    return this.findRandom(normalizedCount);
   }
 }
