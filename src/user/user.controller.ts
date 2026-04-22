@@ -54,4 +54,15 @@ export class UserController {
   ) {
     return this.userService.remove(id);
   }
+  @Post('register')
+  register(@Body() registerUserDto: { email: string; password: string; username: string }) {
+    return this.userService.register(registerUserDto);
+  }
+  
+  @Post('login')
+  login(@Body() loginUserDto: { email: string; password: string; username: string }) {
+    return this.userService.login(loginUserDto);
 }
+}
+
+
