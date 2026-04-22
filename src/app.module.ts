@@ -9,6 +9,7 @@ import { Quiz } from './quiz/entities/quiz.entity';
 import { Subject } from './subject/entities/subject.entity';
 import { QuizHistoryModule } from './quiz_history/quiz_history.module';
 import { QuizAnswersModule } from './quiz_answers/quiz_answers.module';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { QuizAnswersModule } from './quiz_answers/quiz_answers.module';
     SubjectModule,
     QuizHistoryModule,
     QuizAnswersModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],
