@@ -1,10 +1,10 @@
-
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import {
   Injectable,
   InternalServerErrorException,
-  NotFoundException,BadRequestException
+  NotFoundException,
+  BadRequestException,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -16,7 +16,6 @@ import { User } from './entities/user.entity';
 @Injectable()
 export class UserService {
   constructor(
-
     @InjectRepository(User)
     private readonly usersRepo: Repository<User>,
     private readonly jwtService: JwtService,
@@ -41,17 +40,23 @@ export class UserService {
   async update(id: number, updateUserDto: UpdateUserDto) {
     let user = await this.findOne(id);
     user = { ...user, ...updateUserDto };
-    await this.userRepo.save(user);
+    await this.usersRepo.save(user);
     return user;
   }
 
   async remove(id: number) {
     let user = await this.findOne(id);
-    this.userRepo.delete(id);
+    this.usersRepo.delete(id);
   }
 
-  async register(registerUserDto: { email: string; password: string; username: string }) {
-    const existingUser = await this.usersRepo.findOneBy({ email: registerUserDto.email });
+  async register(registerUserDto: {
+    email: string;
+    password: string;
+    username: string;
+  }) {
+    const existingUser = await this.usersRepo.findOneBy({
+      email: registerUserDto.email,
+    });
 
     if (existingUser) {
       throw new BadRequestException('User already exists');
@@ -74,11 +79,18 @@ export class UserService {
       ...tokens,
     };
   }
-  async login(loginUserDto: { email: string; password: string; username: string }) {
+  async login(loginUserDto: {
+    email: string;
+    password: string;
+    username: string;
+  }) {
     const user = await this.usersRepo.findOneBy({ email: loginUserDto.email });
     if (!user) throw new NotFoundException('User not found');
 
-    const isPasswordValid = await bcrypt.compare(loginUserDto.password, user.password);
+    const isPasswordValid = await bcrypt.compare(
+      loginUserDto.password,
+      user.password,
+    );
     if (!isPasswordValid) throw new BadRequestException('Invalid credentials');
 
     const tokens = await this.generateTokens(String(user.id), user.email);
@@ -90,8 +102,10 @@ export class UserService {
   }
 
   private async generateTokens(userId: string, email: string) {
-    const accessSecret = process.env.ACCESS_TOKEN_SECRET || 'ACCESS_TOKEN_SECRET';
-    const refreshSecret = process.env.REFRESH_TOKEN_SECRET || 'REFRESH_TOKEN_SECRET';
+    const accessSecret =
+      process.env.ACCESS_TOKEN_SECRET || 'ACCESS_TOKEN_SECRET';
+    const refreshSecret =
+      process.env.REFRESH_TOKEN_SECRET || 'REFRESH_TOKEN_SECRET';
 
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(
